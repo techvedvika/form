@@ -5,6 +5,7 @@ import 'package:form/Controllers/pendingExpenses_Controller.dart';
 import 'package:form/Controllers/school_Controller.dart';
 import 'package:form/Model/state_model.dart' as c;
 import 'package:form/custom_dialog.dart';
+import 'package:form/data.dart';
 import 'package:form/forms/tour_da.dart';
 import 'package:form/home_screen.dart';
 import 'package:get_storage/get_storage.dart';
@@ -242,13 +243,12 @@ class _DaFormState extends State<DaForm> {
                                               color: Colors.grey),
                                         ),
                                         // ignore: can_be_null_after_null_aware
-                                        items: staffController
-                                          ..map((value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value.toString(),
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
+                                        items: DataModel().state.map((value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value.toString(),
+                                            child: Text(value.toString()),
+                                          );
+                                        }).toList(),
                                         onChanged: (data) {
                                           setState(() {
                                             stateValue = data;

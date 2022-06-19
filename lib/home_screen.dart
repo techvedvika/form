@@ -10,6 +10,7 @@ import 'package:form/Controllers/stockpurchase_controller.dart';
 import 'package:form/Controllers/tourController.dart';
 import 'package:form/Controllers/userTaskController.dart';
 import 'package:form/Model/expense_model.dart';
+import 'package:form/collectionForm/schoolEnrollment.dart';
 import 'package:form/da_form.dart';
 
 import 'package:form/forms/issue_tracker.dart';
@@ -685,6 +686,10 @@ class _GridviewWithBuilderPageState extends State<GridviewWithBuilderPage> {
                                     .taskList![index].formName! ==
                                 'Travel Requisition Form') {
                               Get.to(() => const TravelRequisition());
+                            }else if (taskController
+                                    .taskList![index].formName! ==
+                                'School Enrollment Form') {
+                              Get.to(() => const SchoolEnrollment());
                             }
                           },
                           child: Container(
