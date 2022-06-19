@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:form/Controllers/pendingExpenses_Controller.dart';
 import 'package:form/Controllers/school_Controller.dart';
+import 'package:form/Controllers/state_Controller.dart';
 import 'package:form/Model/state_model.dart' as c;
 import 'package:form/custom_dialog.dart';
-import 'package:form/data.dart';
 import 'package:form/forms/tour_da.dart';
 import 'package:form/home_screen.dart';
 import 'package:get_storage/get_storage.dart';
@@ -243,10 +243,12 @@ class _DaFormState extends State<DaForm> {
                                               color: Colors.grey),
                                         ),
                                         // ignore: can_be_null_after_null_aware
-                                        items: DataModel().state.map((value) {
+                                        items: stateInfoController.stateInfo
+                                            .map((value) {
                                           return DropdownMenuItem<String>(
-                                            value: value.toString(),
-                                            child: Text(value.toString()),
+                                            value: value.stateName.toString(),
+                                            child: Text(
+                                                value.stateName.toString()),
                                           );
                                         }).toList(),
                                         onChanged: (data) {
@@ -316,15 +318,15 @@ class _DaFormState extends State<DaForm> {
                                               color: Colors.grey),
                                         ),
                                         // ignore: can_be_null_after_null_aware
-                                        items: DataModel()
-                                            .districtWithState
+                                        items: stateInfoController.stateInfo
                                             .where((element) =>
-                                                element.state == stateValue)
+                                                element.stateName == stateValue)
                                             .map((value) {
                                           return DropdownMenuItem<String>(
-                                            value: value.district.toString(),
-                                            child:
-                                                Text(value.district.toString()),
+                                            value:
+                                                value.districtName.toString(),
+                                            child: Text(
+                                                value.districtName.toString()),
                                           );
                                         }).toList(),
                                         onChanged: (data) {
@@ -385,15 +387,15 @@ class _DaFormState extends State<DaForm> {
                                               color: Colors.grey),
                                         ),
                                         // ignore: can_be_null_after_null_aware
-                                        items: DataModel()
-                                            .blockWithDistrict
+                                        items: stateInfoController.stateInfo
                                             .where((element) =>
-                                                element.district ==
+                                                element.blockName ==
                                                 districtValue)
                                             .map((value) {
                                           return DropdownMenuItem<String>(
-                                            value: value.block.toString(),
-                                            child: Text(value.block.toString()),
+                                            value: value.blockName.toString(),
+                                            child: Text(
+                                                value.blockName.toString()),
                                           );
                                         }).toList(),
                                         onChanged: (data) {

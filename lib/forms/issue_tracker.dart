@@ -8,7 +8,6 @@ import 'package:form/Model/issue.dart';
 import 'package:form/Model/school_data.dart';
 import 'package:form/Model/staff_data.dart';
 import 'package:form/colors.dart';
-import 'package:form/data.dart';
 
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -198,8 +197,8 @@ class _IssueTrackerState extends State<IssueTracker> {
                     const SizedBox(height: 10),
                     text('Select the District'),
                     const SizedBox(height: 10),
-                    dropDistrict(context, 'Select a district',
-                        DataModel().districtWithState),
+                    // dropDistrict(context, 'Select a district',
+                    //     DataModel().districtWithState),
                     _validateDistrict
                         ? const Text('Please select a District',
                             style: TextStyle(
@@ -210,8 +209,8 @@ class _IssueTrackerState extends State<IssueTracker> {
                     const SizedBox(height: 10),
                     text('Select the Block'),
                     const SizedBox(height: 10),
-                    dropBlock(context, 'Select a block',
-                        DataModel().blockWithDistrict),
+                    // dropBlock(context, 'Select a block',
+                    //     DataModel().blockWithDistrict),
                     _validateBlock
                         ? const Text('Please select a block',
                             style: TextStyle(
@@ -719,84 +718,84 @@ class _IssueTrackerState extends State<IssueTracker> {
     );
   }
 
-  Container dropDistrict(
-    BuildContext context,
-    String name,
-    List<DistrictModel> data,
-  ) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: const [
-          BoxShadow(color: Colors.white, spreadRadius: 1, blurRadius: 5)
-        ],
-      ),
-      child: Stack(children: [
-        DropdownButton<String>(
-          value: issueTrackerController.district,
-          iconSize: 24,
-          elevation: 2,
-          hint: Text(
-            name,
-            style: const TextStyle(color: Colors.grey),
-          ),
-          // ignore: can_be_null_after_null_aware
-          items: data.map((value) {
-            return DropdownMenuItem<String>(
-              value: value.district,
-              child: Text(value.district!),
-            );
-          }).toList(),
-          onChanged: (data) {
-            issueTrackerController.districtSetter(data!);
-            issueTrackerController.blockSetter(null);
-          },
-        ),
-      ]),
-    );
-  }
+//   Container dropDistrict(
+//     BuildContext context,
+//     String name,
+//  //   List<DistrictModel> data,
+//   ) {
+//     return Container(
+//       width: MediaQuery.of(context).size.width,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(5),
+//         boxShadow: const [
+//           BoxShadow(color: Colors.white, spreadRadius: 1, blurRadius: 5)
+//         ],
+//       ),
+//       child: Stack(children: [
+//         DropdownButton<String>(
+//           value: issueTrackerController.district,
+//           iconSize: 24,
+//           elevation: 2,
+//           hint: Text(
+//             name,
+//             style: const TextStyle(color: Colors.grey),
+//           ),
+//           // ignore: can_be_null_after_null_aware
+//           items: data.map((value) {
+//             return DropdownMenuItem<String>(
+//               value: value.district,
+//               child: Text(value.district!),
+//             );
+//           }).toList(),
+//           onChanged: (data) {
+//             issueTrackerController.districtSetter(data!);
+//             issueTrackerController.blockSetter(null);
+//           },
+//         ),
+//       ]),
+//     );
+//   }
 
-  Container dropBlock(
-    BuildContext context,
-    String name,
-    List<BlockModel> data,
-  ) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: const [
-          BoxShadow(color: Colors.white, spreadRadius: 1, blurRadius: 5)
-        ],
-      ),
-      child: Stack(children: [
-        DropdownButton<String>(
-          value: issueTrackerController.block,
-          iconSize: 24,
-          elevation: 2,
-          hint: Text(
-            name,
-            style: const TextStyle(color: Colors.grey),
-          ),
-          // ignore: can_be_null_after_null_aware
-          items: data
-              .where((element) =>
-                  element.district == issueTrackerController.district)
-              .map((value) {
-            return DropdownMenuItem<String>(
-              value: value.block,
-              child: Text(value.block!),
-            );
-          }).toList(),
-          onChanged: (data) {
-            issueTrackerController.blockSetter(data!);
-            Get.find<SchoolController>().filterdata(data);
-          },
-        ),
-      ]),
-    );
-  }
+//   Container dropBlock(
+//     BuildContext context,
+//     String name,
+//  //   List<BlockModel> data,
+//   ) {
+//     return Container(
+//       width: MediaQuery.of(context).size.width,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(5),
+//         boxShadow: const [
+//           BoxShadow(color: Colors.white, spreadRadius: 1, blurRadius: 5)
+//         ],
+//       ),
+//       child: Stack(children: [
+//         DropdownButton<String>(
+//           value: issueTrackerController.block,
+//           iconSize: 24,
+//           elevation: 2,
+//           hint: Text(
+//             name,
+//             style: const TextStyle(color: Colors.grey),
+//           ),
+//           // ignore: can_be_null_after_null_aware
+//           items: data
+//               .where((element) =>
+//                   element.district == issueTrackerController.district)
+//               .map((value) {
+//             return DropdownMenuItem<String>(
+//               value: value.block,
+//               child: Text(value.block!),
+//             );
+//           }).toList(),
+//           onChanged: (data) {
+//             issueTrackerController.blockSetter(data!);
+//             Get.find<SchoolController>().filterdata(data);
+//           },
+//         ),
+//       ]),
+//     );
+//   }
 
   Container dropDown(
     BuildContext context,

@@ -1,3 +1,4 @@
+import 'package:form/Model/blockModel.dart';
 import 'package:form/Model/distribution.dart';
 import 'package:form/Model/expensehead.dart';
 import 'package:form/Model/issue.dart';
@@ -86,6 +87,17 @@ class ApiCalls {
       var jsonString = response.body;
       // print(jsonString);
       return distributionActivityFromMap(jsonString);
+    } else {
+      throw Exception('Failed to load post');
+    }
+  }
+
+  static Future<List<StateInfo>> fetchStateInfo() async {
+    var response = await client.get(Uri.parse(MyColors.baseUrl + 'block'),
+        headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonString = response.body;
+      return stateInfoFromJson(jsonString);
     } else {
       throw Exception('Failed to load post');
     }

@@ -15,7 +15,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import '../colors.dart';
-import '../data.dart';
+import '../da_form.dart';
+import '../home_screen.dart';
 import '../my_text.dart';
 
 final StateController _stateController = Get.put(StateController());
@@ -32,27 +33,27 @@ class StockDistribution extends StatefulWidget {
 }
 
 class _StockDistributionState extends State<StockDistribution> {
-  TextEditingController _officeController = TextEditingController();
-  TextEditingController _fromController = TextEditingController();
-  TextEditingController _toController = TextEditingController();
-  TextEditingController _daController = TextEditingController();
-  TextEditingController _daysController = TextEditingController();
-  TextEditingController _qtyController = TextEditingController();
-  TextEditingController _purposeController = TextEditingController();
-  TextEditingController _noOfDayController = TextEditingController();
+  final TextEditingController _officeController = TextEditingController();
+  final TextEditingController _fromController = TextEditingController();
+  final TextEditingController _toController = TextEditingController();
+  final TextEditingController _daController = TextEditingController();
+  final TextEditingController _daysController = TextEditingController();
+  final TextEditingController _qtyController = TextEditingController();
+  final TextEditingController _purposeController = TextEditingController();
+  final TextEditingController _noOfDayController = TextEditingController();
 
-  bool _validatestate = false;
-  bool _validateTourId = false;
+  final bool _validatestate = false;
+  final bool _validateTourId = false;
 
-  bool _validateblock = false;
-  bool _validateDistrict = false;
-  bool _validateFrom = false;
-  bool _validateTo = false;
-  bool _validateDA = false;
-  bool _validateDays = false;
+  final bool _validateblock = false;
+  final bool _validateDistrict = false;
+  final bool _validateFrom = false;
+  final bool _validateTo = false;
+  final bool _validateDA = false;
+  final bool _validateDays = false;
 
-  bool _validateVisit = false;
-  bool _validatePurpose = false;
+  final bool _validateVisit = false;
+  final bool _validatePurpose = false;
   String? _districtName;
   String? _state;
   String? _blockName;
@@ -63,8 +64,8 @@ class _StockDistributionState extends State<StockDistribution> {
   String? stateValue;
   String? districtValue;
   String? blockValue;
-  String? itemqtyValue = null;
-  String? schoolValue = null;
+  String? itemqtyValue;
+  String? schoolValue;
 
   String? dropdownValue3;
   String? dropdownValue4;
@@ -97,9 +98,7 @@ class _StockDistributionState extends State<StockDistribution> {
       firstDate: title == 'to' ? schoolController.from! : DateTime(2017),
       lastDate: DateTime(2040),
       builder: (context, picker) {
-        return Theme(
-            data: theme,
-            child: picker!);
+        return Theme(data: theme, child: picker!);
       },
     );
     if (selected != null) {
@@ -191,10 +190,11 @@ class _StockDistributionState extends State<StockDistribution> {
                                           const TextStyle(color: Colors.grey),
                                     ),
                                     // ignore: can_be_null_after_null_aware
-                                    items: DataModel().state.map((value) {
+                                    items: stateInfoController.stateInfo
+                                        .map((value) {
                                       return DropdownMenuItem<String>(
-                                        value: value.toString(),
-                                        child: Text(value.toString()),
+                                        value: value.stateName.toString(),
+                                        child: Text(value.stateName.toString()),
                                       );
                                     }).toList(),
                                     onChanged: (data) {
@@ -248,14 +248,14 @@ class _StockDistributionState extends State<StockDistribution> {
                                           const TextStyle(color: Colors.grey),
                                     ),
                                     // ignore: can_be_null_after_null_aware
-                                    items: DataModel()
-                                        .districtWithState
+                                    items: stateInfoController.stateInfo
                                         .where((element) =>
-                                            element.state == stateValue)
+                                            element.stateName == stateValue)
                                         .map((value) {
                                       return DropdownMenuItem<String>(
-                                        value: value.district.toString(),
-                                        child: Text(value.district.toString()),
+                                        value: value.districtName.toString(),
+                                        child:
+                                            Text(value.districtName.toString()),
                                       );
                                     }).toList(),
                                     onChanged: (data) {
@@ -305,14 +305,14 @@ class _StockDistributionState extends State<StockDistribution> {
                                           const TextStyle(color: Colors.grey),
                                     ),
                                     // ignore: can_be_null_after_null_aware
-                                    items: DataModel()
-                                        .blockWithDistrict
+                                    items: stateInfoController.stateInfo
                                         .where((element) =>
-                                            element.district == districtValue)
+                                            element.districtName ==
+                                            districtValue)
                                         .map((value) {
                                       return DropdownMenuItem<String>(
-                                        value: value.block.toString(),
-                                        child: Text(value.block.toString()),
+                                        value: value.blockName.toString(),
+                                        child: Text(value.blockName.toString()),
                                       );
                                     }).toList(),
                                     onChanged: (data) {
@@ -414,7 +414,7 @@ class _StockDistributionState extends State<StockDistribution> {
                         const SizedBox(
                           height: 15,
                         ),
-                        schoolController.itemsData!.length == 0
+                        schoolController.itemsData!.isEmpty
                             ? const SizedBox()
                             : ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),

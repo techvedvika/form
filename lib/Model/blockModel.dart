@@ -1,42 +1,34 @@
-// To parse this JSON data, do
-//
-//     final blockModel = blockModelFromJson(jsonString);
-
 import 'dart:convert';
 
-List<BlockModel> blockModelFromJson(String str) =>
-    List<BlockModel>.from(json.decode(str).map((x) => BlockModel.fromJson(x)));
+List<StateInfo> stateInfoFromJson(String str) =>
+    List<StateInfo>.from(json.decode(str).map((x) => StateInfo.fromJson(x)));
 
-String blockModelToJson(List<BlockModel> data) =>
+String stateInfoToJson(List<StateInfo> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class BlockModel {
-  BlockModel({
-    this.blockId,
-    this.stateId,
-    this.districtId,
-    this.blockName,
+class StateInfo {
+  StateInfo({
+    this.stateName,
+    this.districtName,
     this.status,
+    this.blockName,
   });
 
-  String? blockId;
-  String? stateId;
-  String? districtId;
-  String? blockName;
+  String? stateName;
+  String? districtName;
   String? status;
+  String? blockName;
 
-  factory BlockModel.fromJson(Map<String, dynamic> json) => BlockModel(
-        blockId: json["blockId"],
-        stateId: json["stateId"],
-        districtId: json["DistrictId"],
+  factory StateInfo.fromJson(Map<String, dynamic> json) => StateInfo(
+        stateName: json["stateName"],
+        districtName: json["districtName"],
         blockName: json["blockName"],
         status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
-        "blockId": blockId,
-        "stateId": stateId,
-        "DistrictId": districtId,
+        "stateName": stateName,
+        "districtName": districtName,
         "blockName": blockName,
         "status": status,
       };

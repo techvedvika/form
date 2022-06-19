@@ -23,6 +23,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'Controllers/state_Controller.dart';
 import 'Controllers/tab.dart';
 import 'colors.dart';
 import 'form.dart';
@@ -45,6 +46,7 @@ Color shimmer_highlighted = Colors.grey.shade500;
 
 final GetXNetworkManager _networkManager = Get.put(GetXNetworkManager());
 final OfflineHandler offlineHandler = Get.put(OfflineHandler());
+final StateInfoController stateInfoController = Get.put(StateInfoController());
 
 final StateController stateController = Get.put(StateController());
 final DistrictController districtController = Get.put(DistrictController());
@@ -686,7 +688,7 @@ class _GridviewWithBuilderPageState extends State<GridviewWithBuilderPage> {
                                     .taskList![index].formName! ==
                                 'Travel Requisition Form') {
                               Get.to(() => const TravelRequisition());
-                            }else if (taskController
+                            } else if (taskController
                                     .taskList![index].formName! ==
                                 'School Enrollment Form') {
                               Get.to(() => const SchoolEnrollment());

@@ -3,15 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form/Controllers/school_Controller.dart';
+import 'package:form/Controllers/state_Controller.dart';
+import 'package:form/Model/blockModel.dart';
 import 'package:form/custom_dialog.dart';
 import 'package:form/forms/issue_tracker.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
-import 'package:form/Model/state_model.dart' as c;
 import '../Controllers/pendingExpenses_Controller.dart';
 import '../colors.dart';
 import 'package:http/http.dart' as http;
-import '../data.dart';
 import '../my_text.dart';
 
 final staffController = Get.put(StaffController());
@@ -114,82 +114,107 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
   @override
   Widget build(BuildContext context) {
     _facilitatorController.text = GetStorage().read('username');
-    // _boyController.text = 'hey';
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF8A2724),
-          title: const Text(
-            'School Enrollment Form',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        body: Obx(
-          () => staffController.isLoading.value || isLoading.value
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: SizedBox(
-                      height: 1000,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(height: 10),
-                          //facilitator field
-                          const Text(
-                            'Facilitator',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.grey_95),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 45,
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4))),
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.symmetric(horizontal: 25),
-                            child: TextField(
-                              textInputAction: TextInputAction.next,
-                              onSubmitted: (value) {},
-                              maxLines: 1,
-                              controller: _facilitatorController,
-                              decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(-12),
-                                  border: InputBorder.none,
-                                  hintStyle: MyText.body1(context)!
-                                      .copyWith(color: MyColors.grey_40)),
-                            ),
-                          ),
-                          //state field
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            'State',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.grey_95),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          GetBuilder<StateController>(
-                              init: StateController(),
-                              builder: (stateController) {
-                                List<c.State>? state;
-                                state = _stateController.stateList.data;
+    return GetBuilder<StateInfoController>(
+        init: StateInfoController(),
+        builder: (stateInfoController) {
+          var seen = <String>{};
+          List<StateInfo> _uniqueState = [];
+          List<StateInfo> _uniqueDistrict = [];
+          List<StateInfo> _uniqueBlock = [];
 
-                                return Container(
+          _uniqueState = stateInfoController.stateInfo
+              .where((student) => seen.add(student.stateName!))
+              .toList();
+
+          if (stateValue != null) {
+            _uniqueDistrict = stateInfoController.stateInfo
+                .where((student) => student.stateName == stateValue)
+                .toList();
+            _uniqueDistrict = _uniqueDistrict
+                .where((student) => seen.add(student.districtName!))
+                .toList();
+          }
+
+          if (districtValue != null) {
+            _uniqueBlock = stateInfoController.stateInfo
+                .where((student) => student.districtName == districtValue)
+                .toList();
+            _uniqueBlock = _uniqueBlock
+                .where((student) => seen.add(student.blockName!))
+                .toList();
+          }
+
+          return Scaffold(
+              appBar: AppBar(
+                backgroundColor: const Color(0xFF8A2724),
+                title: const Text(
+                  'School Enrollment Form',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              body: Obx(
+                () => staffController.isLoading.value || isLoading.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            height: 1000,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(height: 10),
+                                //facilitator field
+                                const Text(
+                                  'Facilitator',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: MyColors.grey_95),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  height: 45,
+                                  decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(4))),
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25),
+                                  child: TextField(
+                                    textInputAction: TextInputAction.next,
+                                    onSubmitted: (value) {},
+                                    maxLines: 1,
+                                    controller: _facilitatorController,
+                                    decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.all(-12),
+                                        border: InputBorder.none,
+                                        hintStyle: MyText.body1(context)!
+                                            .copyWith(color: MyColors.grey_40)),
+                                  ),
+                                ),
+                                //state field
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'State',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: MyColors.grey_95),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.9,
                                   decoration: BoxDecoration(
@@ -212,10 +237,11 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                             const TextStyle(color: Colors.grey),
                                       ),
                                       // ignore: can_be_null_after_null_aware
-                                      items: DataModel().state.map((value) {
+                                      items: _uniqueState.map((value) {
                                         return DropdownMenuItem<String>(
-                                          value: value.toString(),
-                                          child: Text(value.toString()),
+                                          value: value.stateName.toString(),
+                                          child:
+                                              Text(value.stateName.toString()),
                                         );
                                       }).toList(),
                                       onChanged: (data) {
@@ -226,30 +252,23 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                       },
                                     ),
                                   ]),
-                                );
-                              }),
-                          //district field
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            'District',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.grey_95),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          GetBuilder<DistrictController>(
-                              init: DistrictController(),
-                              builder: (districtController) {
-                                List<c.District>? district;
-                                district =
-                                    districtController.districtList.value.data;
+                                ),
 
-                                return Container(
+                                //district field
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'District',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: MyColors.grey_95),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.9,
                                   decoration: BoxDecoration(
@@ -272,15 +291,11 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                             const TextStyle(color: Colors.grey),
                                       ),
                                       // ignore: can_be_null_after_null_aware
-                                      items: DataModel()
-                                          .districtWithState
-                                          .where((element) =>
-                                              element.state == stateValue)
-                                          .map((value) {
+                                      items: _uniqueDistrict.map((value) {
                                         return DropdownMenuItem<String>(
-                                          value: value.district.toString(),
-                                          child:
-                                              Text(value.district.toString()),
+                                          value: value.districtName.toString(),
+                                          child: Text(
+                                              value.districtName.toString()),
                                         );
                                       }).toList(),
                                       onChanged: (data) {
@@ -291,26 +306,23 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                       },
                                     ),
                                   ]),
-                                );
-                              }),
-                          //block Value
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            'Block',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.grey_95),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          GetBuilder<BlockController>(
-                              init: BlockController(),
-                              builder: (blockController) {
-                                return Container(
+                                ),
+
+                                //block Value
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'Block',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: MyColors.grey_95),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.9,
                                   decoration: BoxDecoration(
@@ -333,14 +345,16 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                             const TextStyle(color: Colors.grey),
                                       ),
                                       // ignore: can_be_null_after_null_aware
-                                      items: DataModel()
-                                          .blockWithDistrict
-                                          .where((element) =>
-                                              element.district == districtValue)
-                                          .map((value) {
+                                      items: _uniqueBlock.map((value) {
                                         return DropdownMenuItem<String>(
-                                          value: value.block.toString(),
-                                          child: Text(value.block.toString()),
+                                          value: value.blockName
+                                              .toString()
+                                              .replaceAll(',', ''),
+                                          child: Text(
+                                            value.blockName
+                                                .toString()
+                                                .replaceAll(',', ''),
+                                          ),
                                         );
                                       }).toList(),
                                       onChanged: (data) {
@@ -351,322 +365,340 @@ class _SchoolEnrollmentState extends State<SchoolEnrollment> {
                                       },
                                     ),
                                   ]),
-                                );
-                              }),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          //school Value
-                          const Text(
-                            'School',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.grey_95),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          GetBuilder<SchoolController>(
-                              init: SchoolController(),
-                              builder: (_schoolController) {
-                                return Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Colors.white,
-                                          spreadRadius: 1,
-                                          blurRadius: 5)
-                                    ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                //school Value
+                                const Text(
+                                  'School',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: MyColors.grey_95),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                GetBuilder<SchoolController>(
+                                    init: SchoolController(),
+                                    builder: (_schoolController) {
+                                      return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.9,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                color: Colors.white,
+                                                spreadRadius: 1,
+                                                blurRadius: 5)
+                                          ],
+                                        ),
+                                        child: Flexible(
+                                          child: Stack(children: [
+                                            DropdownButton<String>(
+                                              value: schoolValue,
+                                              iconSize: 24,
+                                              elevation: 2,
+                                              isExpanded: true,
+                                              hint: Text(
+                                                'Select School'.tr,
+                                                style: const TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                              // ignore: can_be_null_after_null_aware
+                                              items: schoolController.schoolList
+                                                  .where((element) =>
+                                                      element.distname ==
+                                                      districtValue)
+                                                  .map((value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value.schoolName
+                                                      .toString(),
+                                                  child: (Text(value.schoolName
+                                                      .toString())),
+                                                );
+                                              }).toList(),
+                                              onChanged: (data) {
+                                                setState(() {
+                                                  schoolValue = data;
+                                                  // dropdownValue4 = null;
+                                                });
+                                              },
+                                            ),
+                                          ]),
+                                        ),
+                                      );
+                                    }),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        'Grade',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Boys',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Girls',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Total',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+
+                                Expanded(
+                                  child: ListView.builder(
+                                      itemCount: graderowList.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        // totalboys += int.parse(
+                                        //     graderowList[index].boyController!.text);
+                                        //         .boyController!
+                                        //         .text
+                                        // total = int.parse(graderowList[index]
+                                        //         .boyController!
+                                        //         .text) +
+                                        //     int.parse(graderowList[index]
+                                        //         .girlController!
+                                        //         .text);
+                                        // totalStudent = totalStudent + total;
+                                        // totalboys = totalboys +
+                                        //     int.parse(graderowList[index]
+                                        //         .boyController!
+                                        //         .text);
+                                        // totalgirls = totalgirls +
+                                        //     int.parse(graderowList[index]
+                                        //         .girlController!
+                                        //         .text);
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                graderowList[index].grade!,
+                                                style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: MyColors.grey_95),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: TextField(
+                                                controller: graderowList[index]
+                                                    .boyController,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: <
+                                                    TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ], // Onl
+                                                decoration:
+                                                    const InputDecoration(
+                                                        contentPadding:
+                                                            EdgeInsets.all(0)),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 20.0,
+                                            ),
+                                            Expanded(
+                                              child: TextField(
+                                                  controller:
+                                                      graderowList[index]
+                                                          .girlController,
+                                                  keyboardType: TextInputType
+                                                      .number,
+                                                  inputFormatters: <
+                                                      TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly
+                                                  ], // Only numbers can be entered
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  0))),
+                                            ),
+                                            const SizedBox(
+                                              width: 20.0,
+                                            ),
+                                            Expanded(
+                                              child: Text(graderowList[index]
+                                                              .boyController!
+                                                              .text ==
+                                                          '' ||
+                                                      graderowList[index]
+                                                              .girlController!
+                                                              .text ==
+                                                          ''
+                                                  ? '0'
+                                                  : (int.parse(graderowList[
+                                                                  index]
+                                                              .boyController!
+                                                              .text) +
+                                                          int.parse(graderowList[
+                                                                  index]
+                                                              .girlController!
+                                                              .text))
+                                                      .toString()),
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    const Expanded(
+                                      child: Text(
+                                        'Grand Total',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '$_totalboys',
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '$_totalgirls',
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        '$_totalStudent',
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.grey_95),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 45,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: const Color(0xFF8A2724),
+                                        elevation: 0),
+                                    child: Text("Submit",
+                                        style: MyText.subhead(context)!
+                                            .copyWith(color: Colors.white)),
+                                    onPressed: () async {
+                                      for (var i = 0;
+                                          i < graderowList.length;
+                                          i++) {
+                                        var rsp = await insertEnrollment(
+                                            GetStorage().read('userId'),
+                                            stateValue,
+                                            districtValue,
+                                            blockValue,
+                                            schoolValue,
+                                            graderowList[i].grade,
+                                            graderowList[i].boyController!.text,
+                                            graderowList[i]
+                                                .girlController!
+                                                .text);
+                                        if (i == graderowList.length - 1) {
+                                          if (rsp['status'].toString() == '1') {
+                                            isLoading.value = false;
+                                            stateValue! == null;
+                                            districtValue! == null;
+                                            blockValue! == null;
+                                            schoolValue == null;
+                                            graderowList.clear();
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (_) =>
+                                                    const CustomEventDialog(
+                                                        title: 'Home'));
+                                          }
+                                        }
+                                      }
+                                    },
                                   ),
-                                  child: Flexible(
-                                    child: Stack(children: [
-                                      DropdownButton<String>(
-                                        value: schoolValue,
-                                        iconSize: 24,
-                                        elevation: 2,
-                                        isExpanded: true,
-                                        hint: Text(
-                                          'Select School'.tr,
-                                          style: const TextStyle(
-                                              color: Colors.grey),
-                                        ),
-                                        // ignore: can_be_null_after_null_aware
-                                        items: schoolController.schoolList
-                                            .where((element) =>
-                                                element.distname ==
-                                                districtValue)
-                                            .map((value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value.schoolName.toString(),
-                                            child: (Text(
-                                                value.schoolName.toString())),
-                                          );
-                                        }).toList(),
-                                        onChanged: (data) {
-                                          setState(() {
-                                            schoolValue = data;
-                                            // dropdownValue4 = null;
-                                          });
-                                        },
-                                      ),
-                                    ]),
-                                  ),
-                                );
-                              }),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const <Widget>[
-                              Expanded(
-                                child: Text(
-                                  'Grade',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
                                 ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Boys',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20.0,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Girls',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20.0,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Total',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: graderowList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  // totalboys += int.parse(
-                                  //     graderowList[index].boyController!.text);
-                                  //         .boyController!
-                                  //         .text
-                                  // total = int.parse(graderowList[index]
-                                  //         .boyController!
-                                  //         .text) +
-                                  //     int.parse(graderowList[index]
-                                  //         .girlController!
-                                  //         .text);
-                                  // totalStudent = totalStudent + total;
-                                  // totalboys = totalboys +
-                                  //     int.parse(graderowList[index]
-                                  //         .boyController!
-                                  //         .text);
-                                  // totalgirls = totalgirls +
-                                  //     int.parse(graderowList[index]
-                                  //         .girlController!
-                                  //         .text);
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          graderowList[index].grade!,
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: MyColors.grey_95),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: TextField(
-                                          controller:
-                                              graderowList[index].boyController,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ], // Onl
-                                          decoration: const InputDecoration(
-                                              contentPadding:
-                                                  EdgeInsets.all(0)),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 20.0,
-                                      ),
-                                      Expanded(
-                                        child: TextField(
-                                            controller: graderowList[index]
-                                                .girlController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <
-                                                TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ], // Only numbers can be entered
-                                            decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(0))),
-                                      ),
-                                      const SizedBox(
-                                        width: 20.0,
-                                      ),
-                                      Expanded(
-                                        child: Text(graderowList[index]
-                                                        .boyController!
-                                                        .text ==
-                                                    '' ||
-                                                graderowList[index]
-                                                        .girlController!
-                                                        .text ==
-                                                    ''
-                                            ? '0'
-                                            : (int.parse(graderowList[index]
-                                                        .boyController!
-                                                        .text) +
-                                                    int.parse(
-                                                        graderowList[index]
-                                                            .girlController!
-                                                            .text))
-                                                .toString()),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              const Expanded(
-                                child: Text(
-                                  'Grand Total',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  '$_totalboys',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20.0,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  '$_totalgirls',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20.0,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  '$_totalStudent',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: MyColors.grey_95),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 45,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: const Color(0xFF8A2724),
-                                  elevation: 0),
-                              child: Text("Submit",
-                                  style: MyText.subhead(context)!
-                                      .copyWith(color: Colors.white)),
-                              onPressed: () async {
-                                for (var i = 0; i < graderowList.length; i++) {
-                                  var rsp = await insertEnrollment(
-                                      GetStorage().read('userId'),
-                                      stateValue,
-                                      districtValue,
-                                      blockValue,
-                                      schoolValue,
-                                      graderowList[i].grade,
-                                      graderowList[i].boyController!.text,
-                                      graderowList[i].girlController!.text);
-                                  if (i == graderowList.length - 1) {
-                                    if (rsp['status'].toString() == '1') {
-                                      isLoading.value = false;
-                                      stateValue! == null;
-                                      districtValue! == null;
-                                      blockValue! == null;
-                                      schoolValue == null;
-                                      graderowList.clear();
-
-                                      showDialog(
-                                          context: context,
-                                          builder: (_) =>
-                                              const CustomEventDialog(
-                                                  title: 'Home'));
-                                    }
-                                  }
-                                }
-                              },
+                                //Nursery
+                              ],
                             ),
                           ),
-                          //Nursery
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-          // ),
-        ));
+                // ),
+              ));
+        });
   }
 
   Future insertEnrollment(
@@ -699,14 +731,10 @@ class GradeRow {
   String? grade;
   TextEditingController? boyController;
   TextEditingController? girlController;
-  
 
   GradeRow({
     this.grade,
     this.boyController,
     this.girlController,
-    
   });
-  
 }
-

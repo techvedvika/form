@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form/Controllers/state_Controller.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -13,6 +14,8 @@ import 'login.dart';
 Future<void> main() async {
   await GetStorage.init();
   await SqfliteDatabaseHelper.instance.db;
+
+  Get.put(StateInfoController());
 
   runApp(MyApp());
   //configLoading();
